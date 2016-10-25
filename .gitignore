@@ -1,0 +1,8 @@
+build
+downloads
+installs
+
+examples/**/*.bc
+examples/**/*.js
+examples/**/*.data
+examples/**/root
