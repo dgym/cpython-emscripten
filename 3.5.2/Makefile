@@ -65,8 +65,12 @@ $(BUILD)/Makefile: $(BUILD)/.patched
 	)
 
 
-$(BUILD)/$(LIB): $(BUILD)/Makefile $(HOSTPYTHON) $(HOSTPGEN)
+$(BUILD)/$(LIB): $(BUILD)/Makefile $(HOSTPYTHON) $(HOSTPGEN) Setup.local
 	cp Setup.local $(BUILD)/Modules/
+	( \
+		cd $(BUILD)/Modules/zlib; \
+		emconfigure ./configure --static \
+	)
 	( \
 		cd $(BUILD); \
 		emmake make HOSTPYTHON=$(HOSTPYTHON) HOSTPGEN=$(HOSTPGEN) CROSS_COMPILE=yes $(LIB) \
