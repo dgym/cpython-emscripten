@@ -5,4 +5,5 @@ installs
 examples/**/*.bc
 examples/**/*.js
 examples/**/*.data
+examples/**/*.zip
 examples/**/root
