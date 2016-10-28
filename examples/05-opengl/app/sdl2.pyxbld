@@ -1,0 +1,20 @@
+import os.path
+import subprocess
+
+
+def make_ext(modname, pyxfilename):
+    from distutils.extension import Extension
+    cflags = subprocess.check_output(['sdl2-config', '--cflags']).split()
+    ldflags = subprocess.check_output(['sdl2-config', '--libs']).split()
+
+    cflags += ['-I' + os.path.dirname(pyxfilename)]
+    cflags += ['-DGL_GLEXT_PROTOTYPES']
+
+    ldflags += ['-lGL']
+
+    return Extension(
+        name=modname,
+        sources=[pyxfilename],
+        extra_compile_args=cflags,
+        extra_link_args=ldflags,
+    )

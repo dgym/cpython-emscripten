@@ -3,26 +3,27 @@ PYMINOR=$(basename $(PYVERSION))
 
 CC=emcc
 OPTFLAGS=-O2
-CFLAGS=-std=gnu99 $(OPTFLAGS) -g -I ../../installs/python-$(PYVERSION)/include/python$(PYMINOR)/ -Wno-warn-absolute-paths
+CFLAGS=-std=gnu99 $(OPTFLAGS) -g -I ../../installs/python-$(PYVERSION)/include/python$(PYMINOR)/ -Wno-warn-absolute-paths -s USE_SDL=2
 LDFLAGS=$(OPTFLAGS) ../../installs/python-$(PYVERSION)/lib/libpython$(PYMINOR).a \
   -s TOTAL_MEMORY=268435456 \
   -s ASSERTIONS=2 \
   -s EMULATE_FUNCTION_POINTER_CASTS=1 \
-  -s -s EXPORTED_FUNCTIONS='["_main","_PyRun_SimpleString"]' \
+  -s USE_SDL=2 \
+  -s EXPORTED_FUNCTIONS='["_main","_PyRun_SimpleString"]' \
   --memory-init-file 0
 
 
 all: python.asm.js app.zip
 
 
-python.asm.js: main.bc js.bc root
+python.asm.js: main.bc app/sdl2.bc root
 	$(CC) -o $@ $(filter %.bc,$^) $(LDFLAGS) \
 		$(foreach d,$(wildcard root/*),--preload-file $d@/$(notdir $d))
 
 
 app.zip: app
 	if [ -e $@ ]; then rm $@; fi
-	zip -r $@ $<
+	zip -r $@ app/*.py
 
 
 serve: python.asm.js app.zip
