@@ -1,6 +1,6 @@
 PYVERSION=3.5.2
 PYMINOR=$(basename $(PYVERSION))
-
+DLL=libpython$(PYMINOR).js 
 CC=EMCC_FORCE_STDLIBS=1 emcc
 OPTFLAGS=-O3
 CFLAGS=-std=gnu99 $(OPTFLAGS) -g -I ../../installs/python-$(PYVERSION)/include/python$(PYMINOR)/ -Wno-warn-absolute-paths
@@ -16,11 +16,11 @@ LDFLAGS=$(OPTFLAGS) \
 all: python.asm.js
 
 
-python.asm.js: main.bc root dll
+python.asm.js: main.bc root $(DLL)
 	$(CC) -o $@ $(filter %.bc,$^) $(LDFLAGS) \
 		$(foreach d,$(wildcard root/*),--preload-file $d@/$(notdir $d))
 
-dll: ../../installs/python-$(PYVERSION)/lib/libpython$(PYMINOR).js 
+$(DLL): ../../installs/python-$(PYVERSION)/lib/libpython$(PYMINOR).js 
 	cp ../../installs/python-$(PYVERSION)/lib/libpython$(PYMINOR).js .
 
 serve: python.asm.js
