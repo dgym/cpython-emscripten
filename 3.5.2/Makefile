@@ -12,8 +12,10 @@ BUILD=$(ROOT)/build/$(PYVERSION)/Python-$(PYVERSION)
 INSTALL=$(ROOT)/installs/python-$(PYVERSION)
 TARBALL=$(ROOT)/downloads/Python-$(PYVERSION).tgz
 URL=https://www.python.org/ftp/python/$(PYVERSION)/Python-$(PYVERSION).tgz
-LIB=libpython$(PYMINOR).so
-JSLIB=libpython$(PYMINOR).js
+LBASE=libpython$(PYMINOR)
+LIB=$(LBASE).a
+DLIB=$(LBASE).so
+JSLIB=$(LBASE).js
 
 all: install
 
@@ -76,5 +78,6 @@ $(BUILD)/$(LIB): $(BUILD)/Makefile $(HOSTPYTHON) $(HOSTPGEN) Setup.local
 	( \
 		cd $(BUILD); \
 		emmake make HOSTPYTHON=$(HOSTPYTHON) HOSTPGEN=$(HOSTPGEN) CROSS_COMPILE=yes $(LIB) \
-		emcc -O3 -s SIDE_MODULE=1 $(LIB) -o $(JSLIB)
+		emmake make HOSTPYTHON=$(HOSTPYTHON) HOSTPGEN=$(HOSTPGEN) CROSS_COMPILE=yes $(DLIB) \
+		emcc -O3 -s SIDE_MODULE=1 $(DLIB) -o $(JSLIB)
 	)
