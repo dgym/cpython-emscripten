@@ -20,12 +20,13 @@ JSLIB=$(LBASE).js
 all: install
 
 
-install: $(BUILD)/$(LIB)
+install: $(BUILD)/$(LIB) $(BUILD)/$(JSLIB)
 	( \
 		cd $(BUILD); \
 		sed -i -e 's/libinstall:.*/libinstall:/' Makefile; \
 		emmake make HOSTPYTHON=$(HOSTPYTHON) PYTHON_FOR_BUILD=$(HOSTPYTHON) CROSS_COMPILE=yes inclinstall libinstall $(LIB) && \
 		cp $(LIB) $(INSTALL)/lib/ && \
+		cp $(JSLIB) $(INSTALL)/lib/ && \
 		cp $(HOSTINSTALL)/lib/python$(PYMINOR)/_sysconfigdata.py $(INSTALL)/lib/python$(PYMINOR)/ \
 	)
 
@@ -78,6 +79,11 @@ $(BUILD)/$(LIB): $(BUILD)/Makefile $(HOSTPYTHON) $(HOSTPGEN) Setup.local
 	( \
 		cd $(BUILD); \
 		emmake make HOSTPYTHON=$(HOSTPYTHON) HOSTPGEN=$(HOSTPGEN) CROSS_COMPILE=yes $(LIB) \
-		emmake make HOSTPYTHON=$(HOSTPYTHON) HOSTPGEN=$(HOSTPGEN) CROSS_COMPILE=yes $(DLIB) \
-		emcc -O3 -s SIDE_MODULE=1 $(DLIB) -o $(JSLIB)
+	)
+
+$(BUILD)/$(JSLIB): $(BUILD)/$(LIB)
+	( \
+		cd $(BUILD); \
+		emmake make HOSTPYTHON=$(HOSTPYTHON) HOSTPGEN=$(HOSTPGEN) CROSS_COMPILE=yes $(DLIB); \
+		emcc -O3 -s SIDE_MODULE=1 $(DLIB) -o $(JSLIB) \
 	)
