@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     setenv("PYTHONHOME", "/", 0);
 
     EM_ASM({
-      Runtime.loadDynamicLibrary('libpython3.5.js');
+      Runtime.loadDynamicLibrary('./libpython3.5.js');
     }); 
 
     printf("Initializing...");
