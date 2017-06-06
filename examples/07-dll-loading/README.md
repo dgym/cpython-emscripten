@@ -1,9 +1,6 @@
 # Printing from Python to the browser console
 
-This example includes a typical main() entry point that initializes the Python
-interpreter. It also exports PyRun_SimpleString() making it available to
-Javascript. The code in index.html binds this function as pyexec() and then
-gives an example of using it.
+This example loads Python from a shared library at runtime.
 
 # Building
 
