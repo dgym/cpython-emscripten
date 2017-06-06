@@ -16,10 +16,12 @@ LDFLAGS=$(OPTFLAGS) \
 all: python.asm.js
 
 
-python.asm.js: main.bc root
+python.asm.js: main.bc root dll
 	$(CC) -o $@ $(filter %.bc,$^) $(LDFLAGS) \
 		$(foreach d,$(wildcard root/*),--preload-file $d@/$(notdir $d))
 
+dll: ../../installs/python-$(PYVERSION)/lib/libpython$(PYMINOR).js 
+	cp ../../installs/python-$(PYVERSION)/lib/libpython$(PYMINOR).js .
 
 serve: python.asm.js
 	@echo "Serving on port 8062"
@@ -38,7 +40,6 @@ clean:
 
 root: ../../installs/python-$(PYVERSION)/lib/python$(PYMINOR)
 	mkdir -p root/lib
-	#cp ../../installs/python-$(PYVERSION)/lib/libpython$(PYMINOR).js root
 	cp -a ../../installs/python-$(PYVERSION)/lib/python$(PYMINOR)/ root/lib
 
 ../../installs/python-$(PYVERSION)/lib/python$(PYMINOR):
