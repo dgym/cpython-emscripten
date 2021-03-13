@@ -37,6 +37,7 @@ static void onloaderror(const char *filename) {
 
 int main(int argc, char** argv) {
     setenv("PYTHONHOME", "/", 0);
+    setenv("_PYTHON_SYSCONFIGDATA_NAME", "_sysconfigdata", 0);
 
     Py_InitializeEx(0);
 #if PY_MAJOR_VERSION < 3

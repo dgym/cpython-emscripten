@@ -1,4 +1,4 @@
-PYVERSION=3.5.2
+PYVERSION=3.6.7
 PYMINOR=$(basename $(PYVERSION))
 
 CC=emcc
@@ -8,15 +8,15 @@ LDFLAGS=$(OPTFLAGS) ../../installs/python-$(PYVERSION)/lib/libpython$(PYMINOR).a
   -s TOTAL_MEMORY=268435456 \
   -s ASSERTIONS=2 \
   -s EMULATE_FUNCTION_POINTER_CASTS=1 \
-  -s -s EXPORTED_FUNCTIONS='["_main","_PyRun_SimpleString"]' \
+  -s EXPORTED_FUNCTIONS='["_main","_PyRun_SimpleString"]' \
   --memory-init-file 0
 
 
-all: python.asm.js app.zip
+all: python.js app.zip
 
 
-python.asm.js: main.bc js.bc root
-	$(CC) -o $@ $(filter %.bc,$^) $(LDFLAGS) \
+python.js: main.o js.o root
+	$(CC) -o $@ $(filter %.o,$^) $(LDFLAGS) \
 		$(foreach d,$(wildcard root/*),--preload-file $d@/$(notdir $d))
 
 
@@ -25,19 +25,19 @@ app.zip: app
 	zip -r $@ $<
 
 
-serve: python.asm.js app.zip
+serve: python.js app.zip
 	@echo "Serving on port 8062"
-	python -m SimpleHTTPServer 8062
+	python3 -m http.server 8062
 
 
 clean:
 	-rm -fr root
-	-rm python.asm.js python.asm.data
-	-rm *.bc
+	-rm python.js python.data
+	-rm *.o
 
 
-%.bc: %.c ../../installs/python-$(PYVERSION)/lib/python$(PYMINOR)
-	$(CC) -o $@ $< $(CFLAGS)
+%.o: %.c ../../installs/python-$(PYVERSION)/lib/python$(PYMINOR)
+	$(CC) -o $@ -c $< $(CFLAGS)
 
 
 %.c: %.pyx

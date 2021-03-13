@@ -35,7 +35,7 @@ def loop():
     sdl2.glClearColor(math.sin(counter), 0.5, 0.6, 1.0)
     sdl2.glClear(sdl2.GL_COLOR_BUFFER_BIT)
     sdl2.SDL_GL_SwapWindow(window)
-    counter += 0.05
+    counter += 0.01
     if counter > math.pi:
         counter = 0
 

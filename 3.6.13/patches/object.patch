@@ -1,0 +1,30 @@
+*** a/Objects/object.c	2021-02-16 01:30:33.000000000 +0000
+--- b/Objects/object.c	2021-03-05 17:49:26.170625042 +0000
+***************
+*** 464,482 ****
+--- 464,488 ----
+          return;
+      }
+  
++ #ifdef WITH_THREAD
+      PyGILState_STATE gil;
++ #endif // WITH_THREAD
+      PyObject *error_type, *error_value, *error_traceback;
+  
+      fprintf(stderr, "object  : ");
+      fflush(stderr);
++ #ifdef WITH_THREAD
+      gil = PyGILState_Ensure();
++ #endif // WITH_THREAD
+  
+      PyErr_Fetch(&error_type, &error_value, &error_traceback);
+      (void)PyObject_Print(op, stderr, 0);
+      fflush(stderr);
+      PyErr_Restore(error_type, error_value, error_traceback);
+  
++ #ifdef WITH_THREAD
+      PyGILState_Release(gil);
++ #endif // WITH_THREAD
+      /* XXX(twouters) cast refcount to long until %zd is
+         universally available */
+      fprintf(stderr, "\n"

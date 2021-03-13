@@ -32,6 +32,7 @@ static void onloaderror(const char *filename) {
 
 int main(int argc, char** argv) {
     setenv("PYTHONHOME", "/", 0);
+    setenv("_PYTHON_SYSCONFIGDATA_NAME", "_sysconfigdata", 0);
 
     PyImport_ExtendInittab(builtins);
 

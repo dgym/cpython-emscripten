@@ -1,4 +1,4 @@
-PYVERSION=3.5.2
+PYVERSION=3.6.7
 PYMINOR=$(basename $(PYVERSION))
 
 CC=emcc
@@ -17,14 +17,14 @@ LDFLAGS=$(OPTFLAGS) \
 PYX_SRC=$(patsubst ./%,%,$(shell find . -name "*.pyx"))
 MOD_SRC_0=$(patsubst %.pyx,gen0/%.c,$(PYX_SRC))
 MOD_SRC_1=$(patsubst %.pyx,gen1/%.c,$(PYX_SRC))
-MOD_OBJ=$(patsubst %.c,%.bc,$(MOD_SRC_1))
+MOD_OBJ=$(patsubst %.c,%.o,$(MOD_SRC_1))
 
 
-all: python.asm.js app.zip
+all: python.js app.zip
 
 
-python.asm.js: main.bc $(MOD_OBJ) root
-	$(CC) -o $@ $(filter %.bc,$^) $(LDFLAGS) \
+python.js: main.o $(MOD_OBJ) root
+	$(CC) -o $@ $(filter %.o,$^) $(LDFLAGS) \
 		$(foreach d,$(wildcard root/*),--preload-file $d@/$(notdir $d))
 
 
@@ -33,22 +33,22 @@ app.zip: app
 	zip -r $@ app/*.py
 
 
-serve: python.asm.js app.zip
+serve: python.js app.zip
 	@echo "Serving on port 8062"
-	python -m SimpleHTTPServer 8062
+	python3 -m http.server 8062
 
 
 clean:
 	-rm -fr root gen0 gen1
-	-rm python.asm.js python.asm.data
+	-rm python.js python.data
 
 
-main.bc: main.c ../../installs/python-$(PYVERSION)/lib/python$(PYMINOR) builtins.h
+main.o: main.c ../../installs/python-$(PYVERSION)/lib/python$(PYMINOR) builtins.h
 	$(CC) -o $@ $< $(CFLAGS)
 
 
-%.bc: %.c ../../installs/python-$(PYVERSION)/lib/python$(PYMINOR)
-	$(CC) -o $@ $< $(CFLAGS)
+%.o: %.c ../../installs/python-$(PYVERSION)/lib/python$(PYMINOR)
+	$(CC) -o $@ -c $< $(CFLAGS)
 
 
 gen0/%.c: %.pyx

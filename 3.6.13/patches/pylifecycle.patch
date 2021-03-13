@@ -1,0 +1,44 @@
+*** a/Python/pylifecycle.c	2021-02-16 01:30:33.000000000 +0000
+--- b/Python/pylifecycle.c	2021-03-05 18:34:24.910724024 +0000
+***************
+*** 229,234 ****
+--- 229,236 ----
+      char codepage[100];
+      PyOS_snprintf(codepage, sizeof(codepage), "cp%d", GetACP());
+      return get_codec_name(codepage);
++ #elif defined(__EMSCRIPTEN__)
++     return get_codec_name("UTF-8");
+  #elif defined(HAVE_LANGINFO_H) && defined(CODESET)
+      char* codeset = nl_langinfo(CODESET);
+      if (!codeset || codeset[0] == '\0') {
+***************
+*** 998,1003 ****
+--- 1000,1006 ----
+      if (Py_FileSystemDefaultEncoding == NULL)
+      {
+          Py_FileSystemDefaultEncoding = get_locale_encoding();
++         Py_FileSystemDefaultEncoding = "utf-8";
+          if (Py_FileSystemDefaultEncoding == NULL)
+              Py_FatalError("Py_Initialize: Unable to get the locale encoding");
+  
+***************
+*** 1422,1427 ****
+--- 1425,1431 ----
+      fprintf(stderr, "Fatal Python error: %s\n", msg);
+      fflush(stderr); /* it helps in Windows debug build */
+  
++ #ifdef WITH_THREAD
+      /* Check if the current thread has a Python thread state
+         and holds the GIL */
+      PyThreadState *tss_tstate = PyGILState_GetThisThreadState();
+***************
+*** 1437,1442 ****
+--- 1441,1449 ----
+             which has no Python thread state. */
+      }
+      int has_tstate_and_gil = (tss_tstate != NULL);
++ #else // WITH_THREAD
++     int has_tstate_and_gil = 0;
++ #endif // WITH_THREAD
+  
+      if (has_tstate_and_gil) {

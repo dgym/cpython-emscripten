@@ -2,8 +2,9 @@ build
 downloads
 installs
 
-examples/**/*.bc
+examples/**/*.o
 examples/**/*.js
 examples/**/*.data
+examples/**/*.wasm
 examples/**/*.zip
 examples/**/root
