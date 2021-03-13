@@ -1,1 +1,1 @@
-print("The app is running: {}".format(__file__));
+print("Success - the app is running: {}".format(__file__));
