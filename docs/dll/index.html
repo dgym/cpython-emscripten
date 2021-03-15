@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <script src='python.asm.js'></script>
+        <script>
+            window.runPython = Module.cwrap('runpython', 'number', ['string']);
+
+            var onReady = function() {
+                console.log("Running a python statement using pyexec(\"print('Success!')\");");
+                //runPython("print('Success!')\nimport os\nprint(os.listdir('/'))\n");
+            };
+
+            // Wait for the module to be ready before calling any functions.
+            var interval = setInterval(function () {
+                if (Module.calledRun) {
+                    window.clearInterval(interval);
+                    onReady();
+                }
+            }, 100);
+        </script>
+    </body>
+</html>
