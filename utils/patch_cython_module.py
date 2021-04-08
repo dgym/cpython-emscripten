@@ -8,7 +8,7 @@ def patch_init_name(src, module_path):
     new_name = '__'.join(module_path)
     dst = re.sub(
         r'(PyMODINIT_FUNC (?:init|PyInit_))' + re.escape(current_name),
-        '\\1' + re.escape(new_name),
+        '\\1' + new_name,
         src,
     )
     return dst
